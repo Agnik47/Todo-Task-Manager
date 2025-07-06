@@ -1,3 +1,7 @@
+// ============================
+// Home.jsx (Main Page)
+// ============================
+
 "use client";
 
 import Todo from "@/components/Todo";
@@ -7,16 +11,16 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function Home() {
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-  });
-
+  const [formData, setFormData] = useState({ title: "", description: "" });
   const [todoData, setTodoData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("all");
   const [user, setUser] = useState(null);
 
+  const [editId, setEditId] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+
+  //Fetch User Details
   const fetchUser = async () => {
     const response = await axios.get("/api/auth/me");
     try {
@@ -28,11 +32,7 @@ export default function Home() {
     }
   };
 
-  const onChangeHandler = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
+  //Fetch Todo Lists (Need to Update only Authicated User can show their own task list)
   const fetchTodos = async () => {
     try {
       setIsLoading(true);
@@ -50,6 +50,12 @@ export default function Home() {
     fetchTodos();
   }, []);
 
+  //Onchange in input fileds
+  const onChangeHandler = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     if (!formData.title.trim()) {
@@ -58,15 +64,26 @@ export default function Home() {
     }
 
     try {
-      const response = await axios.post("/api", formData);
-      toast.success(response.data.msg);
+      if (isEditing) {
+        const response = await axios.put("/api", formData, {
+          params: { mongoId: editId },
+        });
+        toast.success(response.data.msg);
+        setIsEditing(false);
+        setEditId(null);
+      } else {
+        const response = await axios.post("/api", formData);
+        toast.success(response.data.msg);
+      }
+
       setFormData({ title: "", description: "" });
       await fetchTodos();
     } catch (error) {
-      toast.error("Error creating todo");
+      toast.error("Error submitting task");
     }
   };
 
+  //! Delete Todo List
   const deleteTodo = async (id) => {
     try {
       const response = await axios.delete("/api", {
@@ -79,22 +96,45 @@ export default function Home() {
     }
   };
 
-  const toggleTodoStatus = async (id) => {
+  //! Toggle Todo Status
+  const toggleTodoStatus = async (id, status) => {
     try {
-      const response = await axios.put(
+      // Optimistically update UI
+      setTodoData((prev) =>
+        prev.map((todo) =>
+          todo._id === id ? { ...todo, isCompleted: status } : todo
+        )
+      );
+
+      await axios.put(
         "/api",
-        {},
+        { isCompleted: status },
         {
           params: { mongoId: id },
         }
       );
-      toast.success(response.data.msg);
+
+      // Refetch to ensure consistency
       fetchTodos();
     } catch (error) {
+      // Revert on error
+      setTodoData((prev) =>
+        prev.map((todo) =>
+          todo._id === id ? { ...todo, isCompleted: !status } : todo
+        )
+      );
       toast.error("Error updating todo");
     }
   };
 
+  //! Edit the Todo List
+  const startEditing = (item) => {
+    setIsEditing(true);
+    setEditId(item._id);
+    setFormData({ title: item.title, description: item.description });
+  };
+
+  //! Filters
   const filteredTodos = todoData.filter((item) => {
     if (activeTab === "all") return true;
     if (activeTab === "active") return !item.isCompleted;
@@ -106,27 +146,25 @@ export default function Home() {
   const completedCount = todoData.filter((item) => item.isCompleted).length;
 
   return (
-    <div className="min-h-screen  bg-gradient-to-r from-orange-100 via-pink-100 to-pink-100 p-4 md:p-8 md:py-24">
+    <div className="min-h-screen bg-gradient-to-r from-orange-100 via-pink-100 to-pink-100 p-4 md:p-8 md:py-24">
       <ToastContainer position="top-right" autoClose={3000} />
 
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
         <header className="mb-8 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">
-            Hello {user?.name.split(' ')[0]},  Welcome to Task Manager
+            Hello {user?.name.split(" ")[0]}, Welcome to Task Manager
           </h1>
           <p className="text-gray-600">
             Organize your work and boost productivity
           </p>
         </header>
 
-        {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Form Section */}
+          {/* Add Task List */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl shadow-md p-6 h-fit">
               <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                Add New Task
+                {isEditing ? "Edit Task" : "Add New Task"}
               </h2>
               <form onSubmit={onSubmitHandler} className="space-y-4">
                 <div>
@@ -158,30 +196,18 @@ export default function Home() {
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200 flex items-center justify-center"
+                  className="w-full bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 cursor-pointer transition duration-200 flex items-center justify-center"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 mr-2"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  Add Task
+                  {isEditing ? "Update Task" : "Add Task"}
                 </button>
               </form>
             </div>
           </div>
 
-          {/* Todo List Section */}
+          {/* Task Table */}
+
           <div className="lg:col-span-2">
             <div className="bg-white rounded-xl shadow-md overflow-hidden">
-              {/* Stats and Tabs */}
               <div className="p-4 border-b">
                 <div className="flex flex-wrap items-center justify-between mb-4">
                   <div className="flex items-center space-x-4">
@@ -227,7 +253,8 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Todo List */}
+              {/* Todo Component mounting */}
+
               <div className="divide-y">
                 {isLoading ? (
                   <div className="p-8 text-center">
@@ -236,37 +263,16 @@ export default function Home() {
                   </div>
                 ) : filteredTodos.length === 0 ? (
                   <div className="p-8 text-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-12 w-12 mx-auto text-gray-400"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1}
-                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                      />
-                    </svg>
-                    <p className="mt-2 text-gray-600">
-                      {activeTab === "all"
-                        ? "No tasks found. Add one to get started!"
-                        : activeTab === "active"
-                        ? "No active tasks. Great job!"
-                        : "No completed tasks yet."}
-                    </p>
+                    <p className="mt-2 text-gray-600">No tasks found.</p>
                   </div>
                 ) : (
                   filteredTodos.map((item, idx) => (
                     <Todo
                       key={item._id}
-                      id={idx}
+                      item={item}
                       deleteTodo={deleteTodo}
                       toggleTodoStatus={toggleTodoStatus}
-                      mongoId={item._id}
-                      item={item}
+                      startEditing={startEditing}
                     />
                   ))
                 )}

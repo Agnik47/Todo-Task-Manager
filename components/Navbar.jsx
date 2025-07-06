@@ -53,7 +53,7 @@ const Navbar = () => {
       <div className="hidden md:flex items-center space-x-12 text-sm font-medium text-gray-700">
         <Link href="/" className="hover:text-blue-600 transition">Home</Link>
         <Link href="/about" className="hover:text-blue-600 transition">Tasks Done</Link>
-        <Link href="/contact" className="hover:text-blue-600 transition">Add Group</Link>
+        <Link href="/add-group" className="hover:text-blue-600 transition">Add Group</Link>
 
         {user ? (
           <div className="relative flex items-center space-x-3 cursor-pointer" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>

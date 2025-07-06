@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Todo = ({ item, id, deleteTodo, mongoId, toggleTodoStatus }) => {
+const Todo = ({ item, id, deleteTodo, mongoId, toggleTodoStatus, startEditing }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const MAX_DESCRIPTION_LENGTH = 100;
 
@@ -73,26 +73,26 @@ const Todo = ({ item, id, deleteTodo, mongoId, toggleTodoStatus }) => {
           )}
         </div>
 
-        {/* Delete button */}
-        <div className="ml-4 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+        {/* Action buttons */}
+        <div className="ml-4 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity flex space-x-2">
+          {/* Edit Button */}
+          <button
+            onClick={() => startEditing(item)}
+            className="text-gray-400 cursor-pointer hover:text-blue-500 transition duration-150 p-1"
+            title="Edit task"
+            aria-label="Edit task"
+          >
+            ✏️
+          </button>
+
+          {/* Delete Button */}
           <button
             onClick={() => deleteTodo(mongoId)}
-            className="text-gray-400 hover:text-red-500 transition duration-150 p-1"
+            className="text-gray-400 cursor-pointer hover:text-red-500 transition duration-150 p-1"
             title="Delete task"
             aria-label="Delete task"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                clipRule="evenodd"
-              />
-            </svg>
+            🗑️
           </button>
         </div>
       </div>
