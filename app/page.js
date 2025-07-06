@@ -270,6 +270,7 @@ export default function Home() {
                     <Todo
                       key={item._id}
                       item={item}
+                      mongoId={item._id} // Add this
                       deleteTodo={deleteTodo}
                       toggleTodoStatus={toggleTodoStatus}
                       startEditing={startEditing}

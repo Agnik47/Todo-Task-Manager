@@ -15,7 +15,7 @@ const Todo = ({ item, id, deleteTodo, mongoId, toggleTodoStatus, startEditing })
         {/* Checkbox */}
         <div className="flex-shrink-0 pt-1 mr-3">
           <button
-            onClick={() => toggleTodoStatus(mongoId)}
+           onClick={() => toggleTodoStatus(mongoId, !item.isCompleted)}
             className={`h-5 w-5 rounded-full border flex items-center justify-center transition ${
               item.isCompleted
                 ? "bg-green-500 border-green-500"
