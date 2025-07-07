@@ -48,11 +48,11 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-orange-100 via-pink-100 to-pink-100 p-4">
       <ToastContainer position="top-center" />
       
       <motion.div 
-        className="bg-white rounded-2xl shadow-sm p-8 w-full max-w-md border border-gray-100"
+        className="bg-gradient-to-r from-orange-50 via-pink-50 to-pink-50 rounded-2xl shadow-sm p-8 w-full max-w-md border border-gray-100"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}

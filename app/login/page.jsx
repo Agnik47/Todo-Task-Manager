@@ -47,11 +47,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-orange-100 via-pink-100 to-pink-100 p-4">
       <ToastContainer position="top-center" />
       
       <motion.div 
-        className="bg-white rounded-2xl shadow-sm p-8 w-full max-w-md border border-gray-100"
+        className="bg-gradient-to-r from-orange-50 via-pink-50 to-pink-50 rounded-2xl shadow-sm p-8 w-full max-w-md border border-gray-100"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
@@ -109,9 +109,7 @@ export default function LoginPage() {
           
           <motion.button
             type="submit"
-            className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 rounded-xl hover:opacity-90 transition-opacity font-medium shadow-md shadow-blue-100 flex items-center justify-center"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            className="w-full cursor-pointer bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 rounded-xl hover:opacity-90 transition-opacity font-medium shadow-md shadow-blue-100 flex items-center justify-center"
             disabled={isLoading}
           >
             {isLoading ? (
@@ -132,7 +130,7 @@ export default function LoginPage() {
           <div className="flex-grow border-t border-gray-200"></div>
         </div>
 
-        <button className="w-full border border-gray-300 py-2.5 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors font-medium flex items-center justify-center gap-2">
+        <button className="w-full border cursor-pointer border-gray-300 py-2.5 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors font-medium flex items-center justify-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 48 48">
             <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
             <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>

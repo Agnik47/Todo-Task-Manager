@@ -10,6 +10,7 @@ import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion, AnimatePresence } from "framer-motion";
+import Loader from "@/components/Loader";
 
 export default function Home() {
   const [formData, setFormData] = useState({ title: "", description: "" });
@@ -197,7 +198,7 @@ export default function Home() {
                     value={formData.description}
                     onChange={onChangeHandler}
                     rows={4}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent bg-gray-50"
+                    className="w-full border min-h-28 max-h-54 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent bg-gray-50"
                   ></textarea>
                 </div>
                 <motion.button
@@ -268,10 +269,7 @@ export default function Home() {
               {/* Todo List */}
               <div className="divide-y divide-gray-100">
                 {isLoading ? (
-                  <div className="p-8 text-center">
-                    <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-                    <p className="mt-4 text-gray-600">Loading your tasks...</p>
-                  </div>
+                  <Loader/>
                 ) : filteredTodos.length === 0 ? (
                   <div className="p-8 text-center">
                     <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
@@ -284,7 +282,7 @@ export default function Home() {
                   </div>
                 ) : (
                   <AnimatePresence>
-                    {filteredTodos.map((item) => (
+                    {filteredTodos.slice().reverse().map((item) => (
                       <Todo
                         key={item._id}
                         item={item}
